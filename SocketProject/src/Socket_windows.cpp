@@ -17,7 +17,7 @@ namespace tpSocket
 {
 	inline static WSADATA wsaData;
 
-	Socket::Socket(std::string_view serverAdress)
+	Socket::Socket(std::string_view serverAddress)
 	{
 		int iResult;
 
@@ -39,7 +39,7 @@ namespace tpSocket
 
 
 		// Resolve the server address and port
-		iResult = getaddrinfo(serverAdress.data(), DEFAULT_PORT, &hints, &result);
+		iResult = getaddrinfo(serverAddress.data(), DEFAULT_PORT, &hints, &result);
 		if (iResult != 0) {
 			printf("getaddrinfo failed: %d\n", iResult);
 			WSACleanup();

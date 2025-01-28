@@ -9,18 +9,13 @@ namespace tpSocket
 	class Socket
 	{
 	public:
-		Socket(std::string_view serverAdress);
-		static void test()
-		{
-			printf("hello");
-		}
-
-		//~Socket();
-		//
-		//void connect();
-		//void disconnect();
-		//
-		//void send();
-		//void listen();
+		Socket(std::string_view serverAddress);
+		~Socket();
+		
+		void connect();
+		void disconnect();
+		
+		void send();
+		void listen();
 	};
 }
