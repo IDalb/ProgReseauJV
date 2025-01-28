@@ -135,11 +135,32 @@ namespace tpSocket
 			return;
 		}
 	}
-	std::string Socket::socketListen()
+
+	std::string Socket::socketReceive()
 	{
 		char receiveBuff[512];
 		recv(socketConnection, receiveBuff, 512, 0);
 		return receiveBuff;
+	}
+
+	void Socket::socketListen()
+	{
+		
+	}
+
+	void Socket::socketBind()
+	{
+		int iResult;
+		iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
+		if (iResult == SOCKET_ERROR) {
+			printf("bind failed with error: %d\n", WSAGetLastError());
+			freeaddrinfo(result);
+			closesocket(ListenSocket);
+			WSACleanup();
+			return 1;
+	}
+	void Socket::socketAccept()
+	{
 	}
 }
 
