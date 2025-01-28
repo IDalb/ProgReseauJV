@@ -7,17 +7,17 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-sockaddr_in getServerAddress(const std::string_view address) {
+sockaddr_in getServerAddress() {
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_port = htons(DEFAULT_PORT);
-    serverAddress.sin_addr.s_addr = inet_addr(address.data());
     return serverAddress;
 }
 
 void tpSocket::Socket::socketConnect(const int socketId, std::string_view serverAddress) {
-    sockaddr_in serverAddressIn = getServerAddress(serverAddress);
-    connect(socketId, reinterpret_cast<struct sockaddr *>(&serverAddressIn), sizeof(serverAddressIn));
+    sockaddr_in serverAddress = getServerAddress();
+    serverAddress.sin_addr.s_addr = inet_addr(address.data());
+    connect(socketId, reinterpret_cast<struct sockaddr *>(&serverAddress), sizeof(serverAddress));
 }
 
 int tpSocket::Socket::socketCreate() {
@@ -41,9 +41,10 @@ std::string tpSocket::Socket::socketReceive(const int socketId) {
 }
 
 
-void tpSocket::Socket::socketBind(const int socketId, const std::string_view serverAddress) {
-    sockaddr_in serverAddressIn = getServerAddress(serverAddress);
-    bind(socketId, reinterpret_cast<struct sockaddr *>(&serverAddressIn), sizeof(serverAddressIn));
+void tpSocket::Socket::socketBind(const int socketId) {
+    sockaddr_in serverAddress = getServerAddress();
+    serverAddress.sin_addr.s_addr = INADDR_ANY;
+    bind(socketId, reinterpret_cast<struct sockaddr *>(&serverAddress), sizeof(serverAddress));
 }
 
 void tpSocket::Socket::socketListen(const int socketId) {
