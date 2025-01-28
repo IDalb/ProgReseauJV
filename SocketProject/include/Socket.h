@@ -16,6 +16,6 @@ namespace tpSocket
 	std::string socketReceive(int socketId);
 		
 	void socketListen(int socketId);
-	void socketBind(int socketId, std::string_view serverAddress);
+	void socketBind(int socketId);
 	int socketAccept(int socketId);
 }
