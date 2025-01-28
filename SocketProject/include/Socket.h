@@ -24,7 +24,7 @@ namespace tpSocket
 		
 		void socketListen(int socketId);
 		void socketBind(int socketId);
-		void socketAccept(int socketId);
+		int socketAccept(int socketId);
 	private:
 	};
 }
