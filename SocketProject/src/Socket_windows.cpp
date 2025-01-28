@@ -63,6 +63,12 @@ namespace tpSocket
 		}
 	}
 
+	Socket::~Socket()
+	{
+		closesocket(socketConnection);
+		WSACleanup();
+	}
+
 	void Socket::socketConnect(std::string_view serverAddress)
 	{
 		struct addrinfo* result = NULL,
@@ -102,6 +108,20 @@ namespace tpSocket
 			return;
 		}
 	}
+
+	void Socket::socketDisconnect()
+	{
+		int iResult;
+		// shutdown the send half of the connection since no more data will be sent
+		iResult = shutdown(socketConnection, SD_SEND);
+		if (iResult == SOCKET_ERROR) {
+			printf("shutdown failed: %d\n", WSAGetLastError());
+			closesocket(socketConnection);
+			WSACleanup();
+			return;
+		}
+	}
+
 	void Socket::socketSend(std::string_view message)
 	{
 		int iResult;
@@ -117,7 +137,9 @@ namespace tpSocket
 	}
 	std::string Socket::socketListen()
 	{
-
+		char receiveBuff[512];
+		recv(socketConnection, receiveBuff, 512, 0);
+		return receiveBuff;
 	}
 }
 

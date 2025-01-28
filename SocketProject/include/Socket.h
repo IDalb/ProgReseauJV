@@ -17,7 +17,11 @@ namespace tpSocket
 		void socketDisconnect();
 		
 		void socketSend(std::string_view message);
-		std::string socketListen();
+		std::string socketReceive();
+		
+		void socketListen();
+		void socketBind();
+		void socketAccept();
 	private:
 		int socketConnection{};
 	};
