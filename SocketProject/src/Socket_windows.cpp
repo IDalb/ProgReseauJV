@@ -45,6 +45,23 @@ namespace tpSocket
 			WSACleanup();
 			return;
 		}
+
+		socketConnection = INVALID_SOCKET;
+
+		// Attempt to connect to the first address returned by
+		// the call to getaddrinfo
+		ptr = result;
+
+		// Create a SOCKET for connecting to server
+		socketConnection = socket(ptr->ai_family, ptr->ai_socktype,
+			ptr->ai_protocol);
+
+		if (socketConnection == INVALID_SOCKET) {
+			printf("Error at socket(): %ld\n", WSAGetLastError());
+			freeaddrinfo(result);
+			WSACleanup();
+			return;
+		}
 	}
 }
 

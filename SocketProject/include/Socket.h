@@ -18,5 +18,7 @@ namespace tpSocket
 		
 		void send();
 		void listen();
+	private:
+		int socketConnection{};
 	};
 }
