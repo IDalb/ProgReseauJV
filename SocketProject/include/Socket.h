@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdio>
 #include <string_view>
 
 #define DEFAULT_PORT "5555"
