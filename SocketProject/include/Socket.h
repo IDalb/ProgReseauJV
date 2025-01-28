@@ -16,15 +16,15 @@ namespace tpSocket
 		int create();
 		void destroy(int socketId);
 		
-		void socketConnect(int sockedId, std::string_view serverAddress);
-		void socketDisconnect(int sockedId);
+		void socketConnect(int socketId, std::string_view serverAddress);
+		void socketDisconnect(int socketId);
 		
-		void socketSend(int sockedId, std::string_view message);
-		std::string socketReceive(int sockedId);
+		void socketSend(int socketId, std::string_view message);
+		std::string socketReceive(int socketId);
 		
-		void socketListen(int sockedId);
-		void socketBind(int sockedId);
-		int socketAccept(int sockedId);
+		void socketListen(int socketId);
+		void socketBind(int socketId);
+		void socketAccept(int socketId);
 	private:
 	};
 }
