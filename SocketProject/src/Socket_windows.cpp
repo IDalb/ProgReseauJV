@@ -83,7 +83,7 @@ namespace tpSocket
 			return;
 		}
 		// Connect to server.
-		//iResult = connect(serverAddress, ptr->ai_addr, (int)ptr->ai_addrlen);
+		iResult = connect(serverAddress, ptr->ai_addr, (int)ptr->ai_addrlen);
 		if (iResult == SOCKET_ERROR) {
 			closesocket(socketConnection);
 			socketConnection = INVALID_SOCKET;
