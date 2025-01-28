@@ -2,6 +2,5 @@
 
 int main()
 {
-	tpSocket::Socket::test();
 	return 0;
 }

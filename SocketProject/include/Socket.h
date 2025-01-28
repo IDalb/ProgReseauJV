@@ -13,11 +13,10 @@ namespace tpSocket
 		Socket() = default;
 		~Socket() = default;
 
-		int create();
-		void destroy(int socketId);
+		int socketCreate();
+		void socketClose(int socketId);
 		
 		void socketConnect(int socketId, std::string_view serverAddress);
-		void socketDisconnect(int socketId);
 		
 		void socketSend(int socketId, std::string_view message);
 		std::string socketReceive(int socketId);
