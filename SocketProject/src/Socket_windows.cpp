@@ -8,7 +8,7 @@
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
 #include <stdio.h>
-
+#include <string>
 #include "Socket.h"
 
 #pragma comment(lib, "Ws2_32.lib")
@@ -17,7 +17,19 @@ namespace tpSocket
 {
 	inline static WSADATA wsaData;
 
-	Socket::Socket()
+	void getAddress(struct addrinfo* result, struct addrinfo hints, std::string_view addr)
+	{
+		ZeroMemory(&hints, sizeof(hints));
+		hints.ai_family = AF_UNSPEC;
+		hints.ai_socktype = SOCK_STREAM;
+		hints.ai_protocol = IPPROTO_UDP;
+
+		// Resolve the server address and port
+		getaddrinfo(addr.data(), std::to_string(DEFAULT_PORT).c_str(), &hints, &result);
+	}
+
+
+	int Socket::create()
 	{
 		int iResult;
 
@@ -25,142 +37,81 @@ namespace tpSocket
 		iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 		if (iResult != 0) {
 			printf("WSAStartup failed: %d\n", iResult);
-			return;
+			return 0;
 		}
 
 		struct addrinfo* result = NULL,
 			* ptr = NULL,
 			hints;
-
-		ZeroMemory(&hints, sizeof(hints));
-		hints.ai_family = AF_UNSPEC;
-		hints.ai_socktype = SOCK_STREAM;
-		hints.ai_protocol = IPPROTO_UDP;
-
-		int iResult;
-		// Resolve the server address and port
-		iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
-		if (iResult != 0) {
-			printf("getaddrinfo failed: %d\n", iResult);
-			WSACleanup();
-			return;
-		}
-		socketConnection = INVALID_SOCKET;
+		getAddress(result, hints, NULL);
 		
-		// Attempt to connect to the first address returned by
-		// the call to getaddrinfo
+		int socketConnection = INVALID_SOCKET;
 		ptr = result;
 
 		// Create a SOCKET for connecting to server
 		socketConnection = socket(ptr->ai_family, ptr->ai_socktype,
 			ptr->ai_protocol);
 
-		if (socketConnection == INVALID_SOCKET) {
-			printf("Error at socket(): %ld\n", WSAGetLastError());
-			freeaddrinfo(result);
-			WSACleanup();
-			return;
-		}
+		freeaddrinfo(result);
+
+		return socketConnection;
 	}
 
-	Socket::~Socket()
+	void Socket::destroy(int socketId)
 	{
-		closesocket(socketConnection);
+		closesocket(socketId);
 		WSACleanup();
 	}
 
-	void Socket::socketConnect(std::string_view serverAddress)
+	void Socket::socketConnect(int socketId, std::string_view serverAddress)
 	{
 		struct addrinfo* result = NULL,
 			* ptr = NULL,
 			hints;
 
-		ZeroMemory(&hints, sizeof(hints));
-		hints.ai_family = AF_UNSPEC;
-		hints.ai_socktype = SOCK_STREAM;
-		hints.ai_protocol = IPPROTO_UDP;
+		getAddress(result, hints, serverAddress);
 
-		int iResult;
-		// Resolve the server address and port
-		iResult = getaddrinfo(serverAddress.data(), DEFAULT_PORT, &hints, &result);
-		if (iResult != 0) {
-			printf("getaddrinfo failed: %d\n", iResult);
-			WSACleanup();
-			return;
-		}
 		// Connect to server.
-		iResult = connect(socketConnection, ptr->ai_addr, (int)ptr->ai_addrlen);
-		if (iResult == SOCKET_ERROR) {
-			closesocket(socketConnection);
-			socketConnection = INVALID_SOCKET;
-		}
-
-		// Should really try the next address returned by getaddrinfo
-		// if the connect call failed
-		// But for this simple example we just free the resources
-		// returned by getaddrinfo and print an error message
+		connect(socketId, ptr->ai_addr, (int)ptr->ai_addrlen);
 
 		freeaddrinfo(result);
-
-		if (socketConnection == INVALID_SOCKET) {
-			printf("Unable to connect to server!\n");
-			WSACleanup();
-			return;
-		}
 	}
 
-	void Socket::socketDisconnect()
+	void Socket::socketDisconnect(int socketId)
 	{
-		int iResult;
-		// shutdown the send half of the connection since no more data will be sent
-		iResult = shutdown(socketConnection, SD_SEND);
-		if (iResult == SOCKET_ERROR) {
-			printf("shutdown failed: %d\n", WSAGetLastError());
-			closesocket(socketConnection);
-			WSACleanup();
-			return;
-		}
+		shutdown(socketId, SD_SEND);
 	}
 
-	void Socket::socketSend(std::string_view message)
+	void Socket::socketSend(int socketId, std::string_view message)
 	{
-		int iResult;
-
-		// Send an initial buffer
-		iResult = send(socketConnection, message.data(), message.size(), 0);
-		if (iResult == SOCKET_ERROR) {
-			printf("send failed: %d\n", WSAGetLastError());
-			closesocket(socketConnection);
-			WSACleanup();
-			return;
-		}
+		send(socketId, message.data(), message.size(), 0);
 	}
 
-	std::string Socket::socketReceive()
+	std::string Socket::socketReceive(int socketId)
 	{
 		char receiveBuff[512];
-		recv(socketConnection, receiveBuff, 512, 0);
+		recv(socketId, receiveBuff, 512, 0);
 		return receiveBuff;
 	}
 
-	void Socket::socketListen()
+	void Socket::socketListen(int socketId)
 	{
-		
+		listen(socketId, SOMAXCONN);
 	}
 
-	void Socket::socketBind()
+	void Socket::socketBind(int socketId)
 	{
-		int iResult;
-		iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
-		if (iResult == SOCKET_ERROR) {
-			printf("bind failed with error: %d\n", WSAGetLastError());
-			freeaddrinfo(result);
-			closesocket(ListenSocket);
-			WSACleanup();
-			return 1;
+		struct addrinfo* result = NULL,
+			* ptr = NULL,
+			hints;
+
+		getAddress(result, hints, NULL);
+		bind(socketId, result->ai_addr, (int)result->ai_addrlen);
 	}
-	void Socket::socketAccept()
+
+	int Socket::socketAccept(int socketId)
 	{
+		return accept(socketId, NULL, NULL);
 	}
 }
 
