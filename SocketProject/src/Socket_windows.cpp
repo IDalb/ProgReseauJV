@@ -17,7 +17,7 @@ namespace tpSocket
 {
 	inline static WSADATA wsaData;
 
-	Socket::Socket(std::string_view serverAddress)
+	Socket::Socket()
 	{
 		int iResult;
 
@@ -37,17 +37,16 @@ namespace tpSocket
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_UDP;
 
-
+		int iResult;
 		// Resolve the server address and port
-		iResult = getaddrinfo(serverAddress.data(), DEFAULT_PORT, &hints, &result);
+		iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
 		if (iResult != 0) {
 			printf("getaddrinfo failed: %d\n", iResult);
 			WSACleanup();
 			return;
 		}
-
 		socketConnection = INVALID_SOCKET;
-
+		
 		// Attempt to connect to the first address returned by
 		// the call to getaddrinfo
 		ptr = result;
@@ -59,6 +58,46 @@ namespace tpSocket
 		if (socketConnection == INVALID_SOCKET) {
 			printf("Error at socket(): %ld\n", WSAGetLastError());
 			freeaddrinfo(result);
+			WSACleanup();
+			return;
+		}
+	}
+
+	void Socket::connect(std::string_view serverAddress)
+	{
+		struct addrinfo* result = NULL,
+			* ptr = NULL,
+			hints;
+
+		ZeroMemory(&hints, sizeof(hints));
+		hints.ai_family = AF_UNSPEC;
+		hints.ai_socktype = SOCK_STREAM;
+		hints.ai_protocol = IPPROTO_UDP;
+
+		int iResult;
+		// Resolve the server address and port
+		iResult = getaddrinfo(serverAddress.data(), DEFAULT_PORT, &hints, &result);
+		if (iResult != 0) {
+			printf("getaddrinfo failed: %d\n", iResult);
+			WSACleanup();
+			return;
+		}
+		// Connect to server.
+		//iResult = connect(serverAddress, ptr->ai_addr, (int)ptr->ai_addrlen);
+		if (iResult == SOCKET_ERROR) {
+			closesocket(socketConnection);
+			socketConnection = INVALID_SOCKET;
+		}
+
+		// Should really try the next address returned by getaddrinfo
+		// if the connect call failed
+		// But for this simple example we just free the resources
+		// returned by getaddrinfo and print an error message
+
+		freeaddrinfo(result);
+
+		if (socketConnection == INVALID_SOCKET) {
+			printf("Unable to connect to server!\n");
 			WSACleanup();
 			return;
 		}

@@ -10,10 +10,10 @@ namespace tpSocket
 	class Socket
 	{
 	public:
-		Socket(std::string_view serverAddress);
+		Socket();
 		~Socket();
 		
-		void connect();
+		void connect(std::string_view serverAddress);
 		void disconnect();
 		
 		void send();
