@@ -1,0 +1,4 @@
+.vs/
+*.user
+_deps/*
+build/
