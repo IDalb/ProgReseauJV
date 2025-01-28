@@ -6,11 +6,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Define dependency paths
-set(DEPS_DIR ${CMAKE_SOURCE_DIR}/_deps)
-set(BUILD_DIR ${CMAKE_BINARY_DIR})
+#set(DEPS_DIR ${CMAKE_SOURCE_DIR}/_deps)
+#set(BUILD_DIR ${CMAKE_BINARY_DIR})
 
 # Add external libraries
-include(FetchContent)
+#include(FetchContent)
 
 # Lib
 #FetchContent_Declare(
@@ -18,7 +18,7 @@ include(FetchContent)
 #    GIT_REPOSITORY https://github.com/...
 #    GIT_TAG master
 #)
-#FetchContent_MakeAvailable(glfw)
+#FetchContent_MakeAvailable(lib_name)
 
 # Add subdirectories
 add_subdirectory(ClientProject)
