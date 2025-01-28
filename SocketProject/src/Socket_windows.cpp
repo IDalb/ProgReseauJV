@@ -63,7 +63,7 @@ namespace tpSocket
 		}
 	}
 
-	void Socket::connect(std::string_view serverAddress)
+	void Socket::socketConnect(std::string_view serverAddress)
 	{
 		struct addrinfo* result = NULL,
 			* ptr = NULL,
@@ -83,7 +83,7 @@ namespace tpSocket
 			return;
 		}
 		// Connect to server.
-		iResult = connect(serverAddress, ptr->ai_addr, (int)ptr->ai_addrlen);
+		iResult = connect(socketConnection, ptr->ai_addr, (int)ptr->ai_addrlen);
 		if (iResult == SOCKET_ERROR) {
 			closesocket(socketConnection);
 			socketConnection = INVALID_SOCKET;
@@ -101,6 +101,23 @@ namespace tpSocket
 			WSACleanup();
 			return;
 		}
+	}
+	void Socket::socketSend(std::string_view message)
+	{
+		int iResult;
+
+		// Send an initial buffer
+		iResult = send(socketConnection, message.data(), message.size(), 0);
+		if (iResult == SOCKET_ERROR) {
+			printf("send failed: %d\n", WSAGetLastError());
+			closesocket(socketConnection);
+			WSACleanup();
+			return;
+		}
+	}
+	std::string Socket::socketListen()
+	{
+
 	}
 }
 
