@@ -17,7 +17,7 @@ namespace tpSocket
 {
 	inline static WSADATA wsaData;
 
-	void getAddress(struct addrinfo* result, struct addrinfo hints, std::string_view addr)
+	void getAddress(struct addrinfo* result, struct addrinfo& hints, std::string_view addr)
 	{
 		ZeroMemory(&hints, sizeof(hints));
 		hints.ai_family = AF_UNSPEC;
@@ -29,7 +29,7 @@ namespace tpSocket
 	}
 
 
-	int Socket::create()
+	int socketCreate()
 	{
 		int iResult;
 
@@ -57,13 +57,14 @@ namespace tpSocket
 		return socketConnection;
 	}
 
-	void Socket::destroy(int socketId)
+	void socketClose(int socketId)
 	{
+		shutdown(socketId, SD_SEND);
 		closesocket(socketId);
 		WSACleanup();
 	}
 
-	void Socket::socketConnect(int socketId, std::string_view serverAddress)
+	void socketConnect(int socketId, std::string_view serverAddress)
 	{
 		struct addrinfo* result = NULL,
 			* ptr = NULL,
@@ -77,29 +78,24 @@ namespace tpSocket
 		freeaddrinfo(result);
 	}
 
-	void Socket::socketDisconnect(int socketId)
-	{
-		shutdown(socketId, SD_SEND);
-	}
-
-	void Socket::socketSend(int socketId, std::string_view message)
+	void socketSend(int socketId, std::string_view message)
 	{
 		send(socketId, message.data(), message.size(), 0);
 	}
 
-	std::string Socket::socketReceive(int socketId)
+	std::string socketReceive(int socketId)
 	{
 		char receiveBuff[512];
 		recv(socketId, receiveBuff, 512, 0);
 		return receiveBuff;
 	}
 
-	void Socket::socketListen(int socketId)
+	void socketListen(int socketId)
 	{
 		listen(socketId, SOMAXCONN);
 	}
 
-	void Socket::socketBind(int socketId)
+	void socketBind(int socketId)
 	{
 		struct addrinfo* result = NULL,
 			* ptr = NULL,
@@ -109,7 +105,7 @@ namespace tpSocket
 		bind(socketId, result->ai_addr, (int)result->ai_addrlen);
 	}
 
-	int Socket::socketAccept(int socketId)
+	int socketAccept(int socketId)
 	{
 		return accept(socketId, NULL, NULL);
 	}
