@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <string_view>
 
-#define DEFAULT_PORT "5555"
+#define DEFAULT_PORT 5555
 
 
 namespace tpSocket
@@ -20,7 +20,7 @@ namespace tpSocket
 		std::string socketReceive();
 		
 		void socketListen();
-		void socketBind();
+		void socketBind(std::string_view serverAddress);
 		void socketAccept();
 	private:
 		int socketConnection{};
