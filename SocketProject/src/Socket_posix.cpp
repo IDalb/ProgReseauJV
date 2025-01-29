@@ -1,6 +1,6 @@
 #ifdef unix
 
-#include "socket.h"
+#include "Socket.h"
 #include <string.h>
 #include <stdio.h>
 
