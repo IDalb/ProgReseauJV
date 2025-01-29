@@ -61,8 +61,8 @@ namespace tpSocket
 
 	int socketReceive(SocketHandle sock, char* address, int* port, char* buffer, size_t size) {
 		struct sockaddr_storage addrStorage;
-		int addrLen = sizeof(addrStorage);
-		int receivedBytes = recvfrom(sock, buffer, size, 0, (struct addrStorage*)&addrStorage, &addrLen);
+		sockSize addrLen = sizeof(addrStorage);
+		int receivedBytes = recvfrom(sock, buffer, size, 0, (struct sockaddr*)&addrStorage, &addrLen);
 		if (receivedBytes < 0) {
 			throw("recvfrom failed");
 			return -1;
