@@ -5,6 +5,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
+# define INVALID INVALID_SOCKET
 typedef SOCKET SocketHandle;
 #else
 #include <sys/socket.h>
@@ -15,6 +16,7 @@ typedef SOCKET SocketHandle;
 # include <sys/time.h>
 # include <netdb.h>
 typedef int SocketHandle;
+# define INVALID -1
 #endif
 
 
