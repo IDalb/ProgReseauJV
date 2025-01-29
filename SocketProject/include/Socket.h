@@ -7,6 +7,8 @@
 #include <ws2tcpip.h>
 # define INVALID INVALID_SOCKET
 typedef SOCKET SocketHandle;
+struct sockaddr addrStorage;
+
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -17,6 +19,7 @@ typedef SOCKET SocketHandle;
 # include <netdb.h>
 typedef int SocketHandle;
 # define INVALID -1
+struct sockaddr_in addrStorage;
 #endif
 
 
