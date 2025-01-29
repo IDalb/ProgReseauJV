@@ -1,5 +1,5 @@
 #include "Socket.h"
-
+#include <iostream>
 
 namespace tpSocket
 {
@@ -10,7 +10,7 @@ namespace tpSocket
 			// Create two sockets, one for IPv4 and another for IPv6
 			SocketHandle sock_v4 = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 			if (sock_v4 == INVALID) {
-				throw("IPv4 socket creation failed");
+				printf("IPv4 socket creation failed");
 				return INVALID;
 			}
 			return sock_v4; // Return the IPv6 socket for binding, or you can handle both separately.
@@ -19,7 +19,7 @@ namespace tpSocket
 		{
 			SocketHandle sock_v6 = socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
 			if (sock_v6 == INVALID) {
-				throw("IPv6 socket creation failed");
+				printf("IPv6 socket creation failed");
 				socketClose(sock_v6);
 				return INVALID;
 			}
@@ -39,7 +39,7 @@ namespace tpSocket
 			addr4.sin_addr.s_addr = htonl(INADDR_ANY);
 
 			if (bind(sock, (struct sockaddr*)&addr4, sizeof(addr4)) != 0) {
-				throw("IPv4 bind failed");
+				printf("IPv4 bind failed");
 				return -1;
 			}
 		}
@@ -52,7 +52,7 @@ namespace tpSocket
 			addr6.sin6_addr = in6addr_any;
 
 			if (bind(sock, (struct sockaddr*)&addr6, sizeof(addr6)) != 0) {
-				throw("IPv6 bind failed");
+				printf("IPv6 bind failed");
 				return -1;
 			}
 		}
@@ -64,7 +64,7 @@ namespace tpSocket
 		sockSize addrLen = sizeof(addrStorage);
 		int receivedBytes = recvfrom(sock, buffer, size, 0, (struct sockaddr*)&addrStorage, &addrLen);
 		if (receivedBytes < 0) {
-			throw("recvfrom failed");
+			printf("recvfrom failed");
 			return -1;
 		}
 
@@ -92,7 +92,7 @@ namespace tpSocket
 			addr6->sin6_family = AF_INET6;
 			addr6->sin6_port = htons(port);
 			if (inet_pton(AF_INET6, address, &addr6->sin6_addr) <= 0) {
-				throw("inet_pton (IPv6) failed");
+				printf("inet_pton (IPv6) failed");
 				return -1;
 			}
 		}
@@ -100,14 +100,14 @@ namespace tpSocket
 			addr4->sin_family = AF_INET;
 			addr4->sin_port = htons(port);
 			if (inet_pton(AF_INET, address, &addr4->sin_addr) <= 0) {
-				throw("inet_pton (IPv4) failed");
+				printf("inet_pton (IPv4) failed");
 				return -1;
 			}
 		}
 
 		int sentBytes = sendto(sock, data, size, 0, (struct sockaddr*)&addrStorage, sizeof(addrStorage));
 		if (sentBytes < 0) {
-			throw("sendto failed");
+			printf("sendto failed");
 		}
 		return sentBytes;
 	}
