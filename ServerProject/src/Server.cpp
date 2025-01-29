@@ -9,18 +9,15 @@
 int main(int argc, char* argv[])
 {
     // Validate the parameters
-    if (argc != 2) {
-        printf("usage: %s server-name\n", argv[0]);
-        return 1;
+    bool ipv4 = false;
+    if (argc == 2) {
+        std::string stdArg(argv[1]);
+        if (stdArg == "ipv4")
+        {
+            ipv4 = true;
+        }
     }
-    bool ipv4 = true;
-    std::string stdArg(argv[1]);
-    if (stdArg == "ipv6")
-    {
-        ipv4 = false;
-    }
-
-
+    
     if (tpSocket::socketInit() != 0) {
         fprintf(stderr, "Failed to initialize sockets\n");
         return 1;

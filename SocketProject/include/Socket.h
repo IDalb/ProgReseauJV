@@ -8,6 +8,7 @@
 # define INVALID INVALID_SOCKET
 typedef SOCKET SocketHandle;
 typedef int sockSize;
+typedef char* connectionOption;
 
 #else
 #include <sys/socket.h>
@@ -20,6 +21,8 @@ typedef int sockSize;
 typedef int SocketHandle;
 # define INVALID -1
 typedef socklen_t sockSize;
+typedef void* connectionOption;
+
 #endif
 
 

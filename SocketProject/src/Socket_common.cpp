@@ -50,7 +50,8 @@ namespace tpSocket
 			addr6.sin6_family = AF_INET6;
 			addr6.sin6_port = htons(port);
 			addr6.sin6_addr = in6addr_any;
-
+			int option = 0;  // 0 means allow both IPv4 and IPv6 connections
+			setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (connectionOption)&option, sizeof(option));
 			if (bind(sock, (struct sockaddr*)&addr6, sizeof(addr6)) != 0) {
 				printf("IPv6 bind failed");
 				return -1;
