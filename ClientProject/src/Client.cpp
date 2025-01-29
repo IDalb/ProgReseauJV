@@ -7,7 +7,7 @@
 int main(int argc, char* argv[])
 {
     // Validate the parameters
-    if (argc != 2) {
+    if (argc < 2) {
         printf("usage: %s server-name\n", argv[0]);
         return 1;
     }
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    constexpr const char* message = "helo";
+    const char* message = argv[2];
 
     // Send a message to the server
     if (tpSocket::socketSendTo(sock, argv[1], SERVER_PORT, message, strlen(message)) < 0) {
