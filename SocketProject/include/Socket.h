@@ -1,5 +1,6 @@
 #pragma once
 #include <stddef.h>
+#include <cstring>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -10,6 +11,9 @@ typedef SOCKET SocketHandle;
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+# include <sys/types.h>
+# include <sys/time.h>
+# include <netdb.h>
 typedef int SocketHandle;
 #endif
 
