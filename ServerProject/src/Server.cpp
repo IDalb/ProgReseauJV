@@ -1,12 +1,7 @@
 #include <Socket.h>
 #include <iostream>
-int main(int argc, char* argv[])
+int main()
 {
-    // Validate the parameters
-    if (argc != 2) {
-        printf("usage: %s server-name\n", argv[0]);
-        return 1;
-    }
     int serverSocket = tpSocket::socketCreate();
     tpSocket::socketBind(serverSocket);
 

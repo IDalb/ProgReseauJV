@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     do
     {
         message = tpSocket::socketReceive(socketId);
-    } while (message != "");
+    } while (message == "");
 
     std::cout << message;
     std::cin;

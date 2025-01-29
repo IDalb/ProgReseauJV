@@ -17,15 +17,24 @@ namespace tpSocket
 {
 	inline static WSADATA wsaData;
 
-	void getAddress(struct addrinfo* result, struct addrinfo& hints, std::string_view addr)
+	struct addrinfo* getAddress(std::string_view addr = "")
 	{
+		struct addrinfo *result, hints;
+
 		ZeroMemory(&hints, sizeof(hints));
 		hints.ai_family = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_UDP;
 
+		const char* address = NULL;
+		if (!addr.empty())
+		{
+			address = addr.data();
+		}
+
 		// Resolve the server address and port
-		getaddrinfo(addr.data(), std::to_string(DEFAULT_PORT).c_str(), &hints, &result);
+		getaddrinfo(address, std::to_string(DEFAULT_PORT).c_str(), &hints, &result);
+		return result;
 	}
 
 
@@ -40,19 +49,15 @@ namespace tpSocket
 			return 0;
 		}
 
-		struct addrinfo* result = NULL,
-			* ptr = NULL,
-			hints;
-		getAddress(result, hints, NULL);
+		struct addrinfo* ptr = getAddress();;
 		
 		int socketConnection = INVALID_SOCKET;
-		ptr = result;
 
 		// Create a SOCKET for connecting to server
 		socketConnection = socket(ptr->ai_family, ptr->ai_socktype,
 			ptr->ai_protocol);
 
-		freeaddrinfo(result);
+		freeaddrinfo(ptr);
 
 		return socketConnection;
 	}
@@ -66,16 +71,12 @@ namespace tpSocket
 
 	void socketConnect(int socketId, std::string_view serverAddress)
 	{
-		struct addrinfo* result = NULL,
-			* ptr = NULL,
-			hints;
-
-		getAddress(result, hints, serverAddress);
+		struct addrinfo * ptr = getAddress(serverAddress);
 
 		// Connect to server.
 		connect(socketId, ptr->ai_addr, (int)ptr->ai_addrlen);
 
-		freeaddrinfo(result);
+		freeaddrinfo(ptr);
 	}
 
 	void socketSend(int socketId, std::string_view message)
@@ -97,12 +98,9 @@ namespace tpSocket
 
 	void socketBind(int socketId)
 	{
-		struct addrinfo* result = NULL,
-			* ptr = NULL,
-			hints;
+		struct addrinfo* ptr = getAddress();
 
-		getAddress(result, hints, NULL);
-		bind(socketId, result->ai_addr, (int)result->ai_addrlen);
+		bind(socketId, ptr->ai_addr, (int)ptr->ai_addrlen);
 	}
 
 	int socketAccept(int socketId)
